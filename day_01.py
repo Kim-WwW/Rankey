@@ -15,26 +15,34 @@ coordinate_map = {
 # Starting condition
 position_x, position_y = 0, 0
 current_direction = 'N'
+visited_positions = []  # List of positions (x, y)
+found_hq = False
 
-# Sample Input
-left_right = 'R'
-steps = 2
+# Read input from file
+with open('day_01.txt', 'r') as file_obj:
+    input_text = file_obj.read()
 
- # Execute the instruction
-new_direction = direction_map[current_direction][left_right]
-if new_direction == 'N':
-    position_y = position_y + steps  #Go north
-elif new_direction == 'S':
-    position_y = position_y - steps  #Go south
-elif new_direction == 'E':
-    position_x = position_x + steps  # Go east
-elif new_direction == 'W':
-    position_x = position_x - steps  # Go west
-else:
-     print(f'Wrong direction: {new_direction}')
-# Record the new direction
-current_direction = new_direction
+for instruction in input_text.split(', '):
+    left_right = instruction[0]     # 'L' or 'R'
+    step_text = instruction[1:]     # '2'
+    steps = int(step_text)
 
+    # Execute the instruction
+    new_direction = direction_map[current_direction][left_right]
+    coordinate_adjustment = coordinate_map[new_direction]
+    for step in range(steps):
+        x_adjustment, y_adjustment = coordinate_adjustment
+        position_x = position_x + x_adjustment
+        position_y = position_y + y_adjustment
+        # If position was visited, break the loop to print result
+        if (position_x, position_y) in visited_positions:
+            found_hq = True
+            break
+        visited_positions.append((position_x, position_y))
+    if found_hq:
+        break
+    # Record the new direction
+    current_direction = new_direction
 # Print result
 print(f'Ending position: ({position_x}, {position_y})')
 print(f'Distance: {abs(position_x) + abs(position_y)}')
